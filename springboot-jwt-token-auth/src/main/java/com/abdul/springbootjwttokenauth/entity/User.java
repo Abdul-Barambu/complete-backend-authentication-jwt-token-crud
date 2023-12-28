@@ -30,6 +30,20 @@ public class User implements UserDetails {
     private boolean enabled = false;
     private boolean locked = false;
 
+
+//    to delete a user from both user and token table, add the following source code below
+//start
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private TokenConfirmation tokenConfirmation;
+
+    @PreRemove
+    private void preRemove() {
+        if (tokenConfirmation != null) {
+            tokenConfirmation.setUser(null); // Set the reference to null to prevent cascading from the other side
+        }
+    }
+//    end
+
     public User(String name,
                 String email,
                 String password,

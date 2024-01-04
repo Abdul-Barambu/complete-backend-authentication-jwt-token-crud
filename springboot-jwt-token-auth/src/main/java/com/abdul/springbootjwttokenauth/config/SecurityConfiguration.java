@@ -31,6 +31,7 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request.requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(AUTH_LIST).permitAll()
                         .requestMatchers("/api/v1/admin").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/school").hasAnyAuthority(Role.SCHOOL.name())
                         .requestMatchers("/api/v1/payer").hasAnyAuthority(Role.PAYER.name())
@@ -42,8 +43,17 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    //    swagger
+    public static final String[] AUTH_LIST = {
+            "/api/v1/auth/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs.yaml",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+    };
+
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
         provider.setUserDetailsService(userService);
